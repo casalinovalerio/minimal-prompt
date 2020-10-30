@@ -29,7 +29,7 @@ function _vpn_prpt() {
 autoload -Uz compinit colors vcs_info && compinit -d && colors
 zstyle ":vcs_info:git:*" formats \
   "%{$fg[magenta]%}%r/%S (%{$fg_bold[yellow]%}%b%{$fg[magenta]%})"
-_user="%{$fg[white]%}[%(!.%{$fg[magenta]%}.%{$fg[yellow]%})%{$fg[white]%}]:"
+_user="%{$fg[white]%}[%(!.%{$fg[magenta]%}.%{$fg[yellow]%})%n%{$fg[white]%}]:"
 _isroot="%(!.%{$fg[magenta]%}>.%{$fg[yellow]%}>)"
 _status="%(?.%{$fg[green]%}>>.%{$fg[red]%}>>) "
 
