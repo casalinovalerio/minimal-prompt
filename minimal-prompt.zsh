@@ -5,6 +5,10 @@ _git_modified="${MINPROMPT_GIT_MODIFIED:-"M"}"
 _git_cached="${MINPROMPT_GIT_CACHED:-"!"}"
 _git_prefix="${MINPROMPT_GIT_PREFIX:-"%{$fg[red]%}["}"
 _git_suffix="${MINPROMPT_GIT_SUFFIX:-"%{$fg[red]%}]"}"
+_gitb_symbol="%{${MINPROMPT_GIT_BRANCH_SYMBOL:-""}%1G%}"
+_char_symbol="%{${MINPROMPT_CHAR_SYMBOL:-""}%1G%}"
+
+_creset="%{$reset_color%}"
 
 function _git_status_prompt() {
   local _out=""
@@ -16,12 +20,12 @@ function _git_status_prompt() {
   [ "$G_U" != "" ] && _out="${_out}${_git_untracked}"
   git diff --quiet 2>/dev/null || _out="${_out}${_git_modified}"
   git diff --cached --quiet 2>/dev/null || _out="${_out}${_git_cached}"
-  [ "$_out" != "" ] && echo "${_git_prefix}${_out}${_git_suffix}"
+  [ "$_out" != "" ] && echo "${_git_prefix}${_out}${_git_suffix} "
 }
 function _pwd_prompt() {
   vcs_info
   [ -n "$vcs_info_msg_0_" ] \
-    && echo -n "${vcs_info_msg_0_/\/./ } $(_git_status_prompt) " \
+    && echo -n "${vcs_info_msg_0_/\/./}$(_git_status_prompt)" \
     || echo -n "%{$fg[cyan]%}%3~ "
 }
 function _vpn_prompt() {
@@ -36,9 +40,9 @@ function _vpn_prompt() {
 
 autoload -Uz compinit colors vcs_info && compinit -d && colors
 zstyle ":vcs_info:git:*" formats \
-  "%{$fg[cyan]%}%r/%S%{$reset_color%}on %{$fg_bold[magenta]%} %b"
-_whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%} in "
-_status="%(?.%{$fg[green]%}.%{$fg[red]%})%B%b "
+  "%{$fg[cyan]%}%r/%S${_creset} on %{$fg_bold[magenta]%}${_gitb_symbol} %b "
+_whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n${_creset} in "
+_status="%(?.%{$fg[green]%}.%{$fg[red]%})%B${_char_symbol}%b "
 
-PROMPT="${_whoami}\$(_pwd_prompt)\$(_vpn_prompt)${_status}%{$reset_color%}"
-RPROMPT="%(?..%{$fg[red]%}[%?])%{$reset_color%}"
+PROMPT="${_whoami}\$(_pwd_prompt)\$(_vpn_prompt)${_status}${_creset}"
+RPROMPT="%(?..%{$fg[red]%}[%?])${_creset}"
