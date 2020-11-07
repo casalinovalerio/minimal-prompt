@@ -1,22 +1,30 @@
-function _git_prpt() {
+_git_ahead="${MINPROMPT_GIT_AHEAD:-"+"}"
+_git_behind="${MINPROMPT_GIT_BEHIND:-"-"}"
+_git_untracked="${MINPROMPT_GIT_UNTRACKED:-"?"}"
+_git_modified="${MINPROMPT_GIT_MODIFIED:-"M"}"
+_git_cached="${MINPROMPT_GIT_CACHED:-"!"}"
+_git_prefix="${MINPROMPT_GIT_PREFIX:-"%{$fg[red]%}["}"
+_git_suffix="${MINPROMPT_GIT_SUFFIX:-"%{$fg[red]%}]"}"
+
+function _git_status_prompt() {
   local _out=""
   local N_A="$(git log --oneline @{u}.. 2> /dev/null | wc -l | tr -d ' ')"
   local N_B="$(git log --oneline ..@{u} 2> /dev/null | wc -l | tr -d ' ')"
   local G_U="$(git ls-files --other --exclude-standard 2> /dev/null)"
-  [ "$N_A" -gt 0 ] && _out="${_out}%{$fg[green]%}+${N_A}"
-  [ "$N_B" -gt 0 ] && _out="${_out}%{$fg[green]%}-${N_B}"
-  [ "$G_U" != "" ] && _out="${_out}%{$fg_bold[red]%}?"
-  git diff --quiet 2> /dev/null || _out="${_out}%{$fg_bold[yellow]%}M"
-  git diff --cached --quiet 2>/dev/null || _out="${_out}%{$fg_bold[yellow]%}!"
-  [ -n $_out ] && echo "%{$fg[magenta]%}[${_out}%{$fg[magenta]%}]"
+  [ "$N_A" -gt 0 ] && _out="${_out}${_git_ahead}${N_A}"
+  [ "$N_B" -gt 0 ] && _out="${_out}${_git_behind}${N_B}"
+  [ "$G_U" != "" ] && _out="${_out}${_git_untracked}"
+  git diff --quiet 2>/dev/null || _out="${_out}${_git_modified}"
+  git diff --cached --quiet 2>/dev/null || _out="${_out}${_git_cached}"
+  [ "$_out" != "" ] && echo "${_git_prefix}${_out}${_git_suffix}"
 }
-function _pwd_prpt() {
+function _pwd_prompt() {
   vcs_info
   [ -n "$vcs_info_msg_0_" ] \
-    && echo -n "${vcs_info_msg_0_/\/. / }$(_git_prpt) " \
+    && echo -n "${vcs_info_msg_0_/\/./ } $(_git_status_prompt) " \
     || echo -n "%{$fg[cyan]%}%3~ "
 }
-function _vpn_prpt() {
+function _vpn_prompt() {
   ip a | grep -e "inet.*tun\|inet.*tap" \
     | sed "s/.*inet //g;s/\/[0-9]\{1,2\}.*//g" \
     | tr '\n' '-' \
@@ -28,10 +36,9 @@ function _vpn_prpt() {
 
 autoload -Uz compinit colors vcs_info && compinit -d && colors
 zstyle ":vcs_info:git:*" formats \
-  "%{$fg[magenta]%}%r/%S (%{$fg_bold[yellow]%}%b%{$fg[magenta]%})"
-_user="%(!.%{$fg[magenta]%}.%{$fg[yellow]%})%n%{$fg[white]%} in "
-_isroot="%(!.%{$fg[magenta]%}>.%{$fg[yellow]%}>)"
-_status="%(?.%{$fg[green]%}>>.%{$fg[red]%}>>) "
+  "%{$fg[cyan]%}%r/%S%{$reset_color%}on %{$fg_bold[magenta]%} %b"
+_whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n%{$reset_color%} in "
+_status="%(?.%{$fg[green]%}.%{$fg[red]%})%B%b "
 
-PROMPT="${_user}\$(_pwd_prpt)\$(_vpn_prpt)${_isroot}${_status}%{$reset_color%}"
+PROMPT="${_whoami}\$(_pwd_prompt)\$(_vpn_prompt)${_status}%{$reset_color%}"
 RPROMPT="%(?..%{$fg[red]%}[%?])%{$reset_color%}"
