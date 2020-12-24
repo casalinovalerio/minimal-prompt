@@ -32,9 +32,7 @@ function _vpn_prompt() {
   ip a | grep -e "inet.*tun\|inet.*tap" \
     | sed "s/.*inet //g;s/\/[0-9]\{1,2\}.*//g" \
     | tr '\n' '-' \
-    | rev \
-    | cut -d '-' -f 2- \
-    | rev \
+    | sed "s/ peer.*-//g;s/-$//g" \
     | xargs -I '{}' echo "%{$fg[yellow]%}[{}] " || return 0
 }
 
