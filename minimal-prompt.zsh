@@ -39,7 +39,7 @@ function _vpn_prompt() {
 autoload -Uz compinit colors vcs_info && compinit -d && colors
 zstyle ":vcs_info:git:*" formats \
   "%{$fg[cyan]%}%r/%S${_creset} on %{$fg_bold[magenta]%}${_gitb_symbol} %b "
-_whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n${_creset} in "
+_whoami="%(!.%{$fg[red]%}.%{$fg[yellow]%})%n@%m${_creset} in "
 _status="%(?.%{$fg[green]%}.%{$fg[red]%})%B${_char_symbol}%b "
 
 PROMPT="${_whoami}\$(_pwd_prompt)\$(_vpn_prompt)${_status}${_creset}"
