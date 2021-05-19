@@ -1,0 +1,17 @@
+# Maintainer 5amu <v.casalino@protonmail.com>
+
+pkgname=minimal-prompt
+pkgver=PKGVER
+pkgrel=PKGREL
+pkgdesc="Personal prompt design"
+url="https://github.com/5amu/minimal-prompt/"
+license=('MIT')
+arch=('x86_64')
+makedepends=('make')
+depends=('bash' 'zsh')
+source=("${pkgname}-${pkgver}.tar.gz")
+sha256sums=("SKIP")
+
+package() {
+    make PREFIX=$pkgdir/usr install
+}

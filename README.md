@@ -10,7 +10,14 @@ To use this, put `minimal-prompt.zsh` in your favourite location and source it
 in your `.zshrc`.
 
 ```bash
-source "/path/to/minimal-prompt.zsh"
+# Automatic (Arch)
+make prepare
+makepkg -si
+echo 'source "/usr/share/zsh/plugins/minimal-prompt.zsh"' >> .bashrc
+
+# Manual
+sudo make install
+echo 'source "/usr/share/zsh/plugins/minimal-prompt.zsh"' >> .bashrc
 ```
 
 You can either use a Nerd Font, or use different characters setting the
